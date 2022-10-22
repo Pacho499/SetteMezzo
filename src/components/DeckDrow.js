@@ -192,6 +192,7 @@ const DeckDrow = () => {
           <Stack className="buttons" gap={3}>
             <Row>
               <Button
+                className="mt-md-3"
                 disabled={startTheGame ? false : true}
                 variant="info"
                 onClick={startGame}
@@ -201,6 +202,7 @@ const DeckDrow = () => {
             </Row>
             <Row>
               <Button
+                className="mt-md-3"
                 disabled={gameSet ? false : true}
                 variant="info"
                 onClick={playerDraw}
@@ -210,6 +212,7 @@ const DeckDrow = () => {
             </Row>
             <Row>
               <Button
+                className="mt-md-3"
                 disabled={gameSet ? false : true}
                 variant="info"
                 onClick={() => setStop(true)}
@@ -218,7 +221,11 @@ const DeckDrow = () => {
               </Button>
             </Row>
             <Row>
-              <Button variant="info" onClick={restartTheGame}>
+              <Button
+                className="mt-md-3"
+                variant="info"
+                onClick={restartTheGame}
+              >
                 Rigioca
               </Button>
             </Row>
