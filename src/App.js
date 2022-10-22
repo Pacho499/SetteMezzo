@@ -1,23 +1,17 @@
-import logo from './logo.svg';
-import './App.css';
+import DeckDrow from "./components/DeckDrow";
+import HeaderNav from "./components/HeaderNav";
+import Rules from "./components/Rules";
+import Footer from "./components/Footer";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <div style={{ backgroundColor: "green" }}>
+      <header>
+        <HeaderNav />
       </header>
+      <Rules />
+      <DeckDrow />
+      <Footer />
     </div>
   );
 }
