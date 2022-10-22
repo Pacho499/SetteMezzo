@@ -180,7 +180,7 @@ const DeckDrow = () => {
   };
 
   return (
-    <Container>
+    <Container fluid className="bg-primary">
       {croupierDraw()}
 
       <Row className="justify-content-center">

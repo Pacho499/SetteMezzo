@@ -5,7 +5,7 @@ import Footer from "./components/Footer";
 
 function App() {
   return (
-    <div style={{ backgroundColor: "green" }}>
+    <div>
       <header>
         <HeaderNav />
       </header>

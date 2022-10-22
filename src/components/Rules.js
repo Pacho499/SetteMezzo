@@ -8,7 +8,7 @@ const Example = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <Container className="my-4">
+    <Container fluid className="py-4 bg-primary">
       <Button
         variant="info"
         onClick={() => setOpen(!open)}
