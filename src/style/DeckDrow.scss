@@ -1,4 +1,9 @@
 @import "custom.scss";
+
+#DeckDrowContainer {
+  min-height: 80vh;
+}
+
 .TotalScore {
   color: $info;
   text-align: center;

@@ -180,7 +180,7 @@ const DeckDrow = () => {
   };
 
   return (
-    <Container fluid className="bg-primary">
+    <Container id="DeckDrowContainer" fluid className="bg-primary">
       {croupierDraw()}
 
       <Row className="justify-content-center">
@@ -247,15 +247,17 @@ const DeckDrow = () => {
         </Col>
       </Row>
       {/* Totale vittorie */}
-      <Row className="TotalScore py-3">
-        <h2>Vittorie totali</h2>
-        <Col className="mt-2">
-          <h3 id="playerScore">{playerWin}</h3>
-        </Col>
-        <Col className="mt-2">
-          <h3 id="croupierScore">{croupierWin}</h3>
-        </Col>
-      </Row>
+      <Container>
+        <Row className="TotalScore py-3">
+          <h2>Vittorie totali</h2>
+          <Col className="mt-2">
+            <h3 id="playerScore">{playerWin}</h3>
+          </Col>
+          <Col className="mt-2">
+            <h3 id="croupierScore">{croupierWin}</h3>
+          </Col>
+        </Row>
+      </Container>
     </Container>
   );
 };
