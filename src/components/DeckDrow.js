@@ -169,7 +169,7 @@ const DeckDrow = () => {
     } else {
       return card.map((card, index) => {
         return (
-          <Col key={index} className="col-6 col-md-4 my-2">
+          <Col key={index} className="col-12 col-md-4 my-2">
             <Card>
               <Card.Img src={card.img} height="40%" />
             </Card>
@@ -183,13 +183,13 @@ const DeckDrow = () => {
     <Container>
       {croupierDraw()}
 
-      <Row>
-        <Col xs={5}>
+      <Row className="justify-content-center">
+        <Col xs={4}>
           <Row className="me-5">{renderCards(playerHand)}</Row>
         </Col>
 
-        <Col xs={2}>
-          <Stack gap={3}>
+        <Col xs={3}>
+          <Stack className="buttons" gap={3}>
             <Row>
               <Button
                 disabled={startTheGame ? false : true}
@@ -219,12 +219,12 @@ const DeckDrow = () => {
             </Row>
             <Row>
               <Button variant="info" onClick={restartTheGame}>
-                Rivincita
+                Rigioca
               </Button>
             </Row>
           </Stack>
         </Col>
-        <Col xs={5}>
+        <Col xs={4}>
           <Row className="ms-5">{renderCards(croupierHand)}</Row>
         </Col>
       </Row>
