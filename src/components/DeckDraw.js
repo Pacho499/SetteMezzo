@@ -7,7 +7,7 @@ import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import Stack from "react-bootstrap/Stack";
 import "../style/DeckDrow.scss";
-const DeckDrow = () => {
+const DeckDraw = () => {
   const [playerHand, setPlayerHand] = useState([]);
   const [croupierHand, setCroupierHand] = useState([]);
   const [playerScore, setPlayerScore] = useState(0);
@@ -26,29 +26,47 @@ const DeckDrow = () => {
     }
   }, [playerScore]);
 
-  const pesca = () => {
+  const draw = (deckAfterFirstDraw) => {
     try {
-      const value = deck[Math.floor(Math.random() * deck.length)];
-      const newDeck = deck.filter((card) => card !== value);
-      setDeck(newDeck);
-      return value;
+      if(!deckAfterFirstDraw){
+        const value = deck[Math.floor(Math.random() * deck.length)];
+        const newDeck = deck.filter((card) => card !== value);
+        setDeck(newDeck);
+        return value;
+      }else {
+        const value = deckAfterFirstDraw[Math.floor(Math.random() * deckAfterFirstDraw.length)];
+        const newDeck = deckAfterFirstDraw.filter((card) => card !== value);
+        setDeck(newDeck);
+        return value;
+      }
+      
     } catch (error) {
       console.log(error);
     }
   };
 
-  const startGame = () => {
+  const firstDraw = () => {
     try {
-      const firstCardPlayer = pesca();
+      const value = deck[Math.floor(Math.random() * deck.length)];
+      const newDeck = deck.filter((card) => card !== value);
+      return {firstCardPlayer: value, newDeck}
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const startGame = () => {
+    debugger
+    try {
+      const {firstCardPlayer, newDeck} = firstDraw();
       setPlayerHand([firstCardPlayer]);
-      console.log(firstCardPlayer);
       if (firstCardPlayer.name === "ReDenari") {
         setPlayerScore(7);
       } else {
         setPlayerScore(firstCardPlayer.value);
       }
       setTimeout(() => {
-        const firstCardCroupier = pesca();
+        const firstCardCroupier = draw(newDeck);
         setCroupierHand([firstCardCroupier]);
         if (firstCardCroupier.name === "ReDenari") {
           setCroupierScore(7);
@@ -65,8 +83,9 @@ const DeckDrow = () => {
   };
 
   const playerDraw = () => {
+    debugger
     try {
-      const value = pesca();
+      const value = draw();
       setPlayerHand((playerHand) => [...playerHand, value]);
       console.log(playerHand);
       if (
@@ -99,7 +118,7 @@ const DeckDrow = () => {
 
   const croupierDraw = () => {
     if (stop === true && croupierScore < 5) {
-      const value = pesca();
+      const value = draw();
       setCroupierHand((croupierHand) => [...croupierHand, value]);
       if (
         croupierHand[0].name === "ReDenari" &&
@@ -262,4 +281,4 @@ const DeckDrow = () => {
   );
 };
 
-export default DeckDrow;
+export default DeckDraw;

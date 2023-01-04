@@ -1,4 +1,4 @@
-import DeckDrow from "./components/DeckDrow";
+import DeckDraw from "./components/DeckDraw";
 import HeaderNav from "./components/HeaderNav";
 import Rules from "./components/Rules";
 import Footer from "./components/Footer";
@@ -10,7 +10,7 @@ function App() {
         <HeaderNav />
       </header>
       <Rules />
-      <DeckDrow />
+      <DeckDraw />
       <Footer />
     </div>
   );
