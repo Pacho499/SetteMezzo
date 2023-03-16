@@ -83,11 +83,11 @@ const DeckDraw = () => {
 
   const firstCardReDenari = (card, isPlayer) => {
     switch (card.value) {
-        case 0.5 || 1.5 || 2.5 || 3.5 || 4.5 || 5.5 || 6.5:
+        case 0.5:
           if(isPlayer){
-            setPlayerInfo({...playerInfo, score:7, hand:[...playerInfo.hand, card]})
+            setPlayerInfo({...playerInfo, score:7.5, hand:[...playerInfo.hand, card]})
           }else{
-            setCroupierInfo({...croupierInfo, score:7, hand:[...croupierInfo.hand, card]})
+            setCroupierInfo({...croupierInfo, score:7.5, hand:[...croupierInfo.hand, card]})
           }
           break;
         default:
