@@ -30,7 +30,7 @@ const DeckDraw = () => {
 
   useEffect(() => {
     if (playerInfo.score > 7.5) {
-      setGameSettings({...gameSettings, canDraw:false});
+      setGameSettings({...gameSettings, canDraw:false, reGame:true, showResult:true, gameSet:false});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playerInfo.score]);
