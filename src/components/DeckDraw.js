@@ -32,7 +32,7 @@ const DeckDraw = () => {
     if (playerInfo.score > 7.5) {
       setGameSettings({...gameSettings, canDraw:false});
     }
-  }, [gameSettings, playerInfo.score]);
+  }, [playerInfo.score]);
 
   const draw = (deckAfterFirstDraw) => {
     try {
