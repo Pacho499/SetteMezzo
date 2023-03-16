@@ -32,19 +32,17 @@ const DeckDraw = () => {
     if (playerInfo.score > 7.5) {
       setGameSettings({...gameSettings, canDraw:false});
     }
-  }, [playerInfo.score]);
+  }, [gameSettings, playerInfo.score]);
 
   const draw = (deckAfterFirstDraw) => {
     try {
       if(!deckAfterFirstDraw){
-        debugger
         const deck = gameSettings.deck
         const drawCard = deck[Math.floor(Math.random() * deck.length)];
         const newDeck = deck.filter((card) => card !== drawCard);
         setGameSettings({...gameSettings, deck:newDeck})
         return drawCard;
       }else {
-        debugger
         const drawCard = deckAfterFirstDraw[Math.floor(Math.random() * deckAfterFirstDraw.length)];
         const newDeck = deckAfterFirstDraw.filter((card) => card !== drawCard);
         return {firstCardCroupier:drawCard, newDeck:newDeck};
@@ -87,9 +85,9 @@ const DeckDraw = () => {
     switch (card.value) {
         case 0.5 || 1.5 || 2.5 || 3.5 || 4.5 || 5.5 || 6.5:
           if(isPlayer){
-            setPlayerInfo({...playerInfo, score:7.5, hand:[...playerInfo.hand, card]})
+            setPlayerInfo({...playerInfo, score:7, hand:[...playerInfo.hand, card]})
           }else{
-            setCroupierInfo({...croupierInfo, score:7.5, hand:[...croupierInfo.hand, card]})
+            setCroupierInfo({...croupierInfo, score:7, hand:[...croupierInfo.hand, card]})
           }
           break;
         default:
