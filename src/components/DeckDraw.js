@@ -32,6 +32,7 @@ const DeckDraw = () => {
     if (playerInfo.score > 7.5) {
       setGameSettings({...gameSettings, canDraw:false});
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playerInfo.score]);
 
   const draw = (deckAfterFirstDraw) => {
