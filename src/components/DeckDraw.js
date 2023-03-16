@@ -8,36 +8,47 @@ import Button from "react-bootstrap/Button";
 import Stack from "react-bootstrap/Stack";
 import "../style/DeckDrow.scss";
 const DeckDraw = () => {
-  const [playerHand, setPlayerHand] = useState([]);
-  const [croupierHand, setCroupierHand] = useState([]);
-  const [playerScore, setPlayerScore] = useState(0);
-  const [croupierScore, setCroupierScore] = useState(0);
-  const [deck, setDeck] = useState(cardsData);
-  const [stop, setStop] = useState(false);
-  const [showResult, setShowResult] = useState(false);
-  const [startTheGame, setStartTheGame] = useState(true);
-  const [gameSet, setGameSet] = useState(false);
-  const [playerWin, setPlayerWin] = useState(0);
-  const [croupierWin, setCroupierWin] = useState(0);
+  const [gameSettings, setGameSettings] = useState({
+    deck: cardsData,
+    showResult: false, 
+    start: true,
+    gameSet: false,
+    stop: false, 
+    canDraw : false,
+    reGame : false
+  })
+
+  const [playerInfo, setPlayerInfo] = useState({
+    playerHand:[],
+    playerScore:0,
+    playerWin:0,
+  })
+
+  const [croupierInfo, setCroupierInfo] = useState({
+    croupierHand:[],
+    croupierScore:0,
+    croupierWin:0
+  })
 
   useEffect(() => {
-    if (playerScore > 7.5) {
-      setShowResult(true);
+    if (playerInfo.playerScore > 7.5) {
+      setGameSettings({...gameSettings, showResult:true});
     }
-  }, [playerScore]);
+  }, [playerInfo.playerScore]);
 
   const draw = (deckAfterFirstDraw) => {
     try {
       if(!deckAfterFirstDraw){
-        const value = deck[Math.floor(Math.random() * deck.length)];
-        const newDeck = deck.filter((card) => card !== value);
-        setDeck(newDeck);
-        return value;
+        const deck = gameSettings.deck
+        const drawCard = deck[Math.floor(Math.random() * deck.length)];
+        const newDeck = deck.filter((card) => card !== drawCard);
+        setGameSettings({...gameSettings, deck:newDeck})
+        return drawCard;
       }else {
-        const value = deckAfterFirstDraw[Math.floor(Math.random() * deckAfterFirstDraw.length)];
-        const newDeck = deckAfterFirstDraw.filter((card) => card !== value);
-        setDeck(newDeck);
-        return value;
+        const drawCard = deckAfterFirstDraw[Math.floor(Math.random() * deckAfterFirstDraw.length)];
+        const newDeck = deckAfterFirstDraw.filter((card) => card !== drawCard);
+        setGameSettings({...gameSettings, deck:newDeck})
+        return drawCard;
       }
       
     } catch (error) {
@@ -46,70 +57,80 @@ const DeckDraw = () => {
   };
 
   const firstDraw = () => {
+    const deck = gameSettings.deck
     try {
-      const value = deck[Math.floor(Math.random() * deck.length)];
-      const newDeck = deck.filter((card) => card !== value);
-      return {firstCardPlayer: value, newDeck}
+      const drawCard = deck[Math.floor(Math.random() * deck.length)];
+      const newDeck = deck.filter((card) => card !== drawCard);
+      return {card: drawCard, newDeck}
     } catch (error) {
       console.log(error);
     }
   }
+  
+  const croupierFirstDraw = (deck) => {
+    const firstCardCroupier = draw(deck);
+    setCroupierInfo({...croupierInfo, croupierScore:firstCardCroupier.value, croupierHand:[firstCardCroupier]})
+  }
+
 
   const startGame = () => {
-    debugger
     try {
-      const {firstCardPlayer, newDeck} = firstDraw();
-      setPlayerHand([firstCardPlayer]);
-      if (firstCardPlayer.name === "ReDenari") {
-        setPlayerScore(7);
-      } else {
-        setPlayerScore(firstCardPlayer.value);
-      }
-      setTimeout(() => {
-        const firstCardCroupier = draw(newDeck);
-        setCroupierHand([firstCardCroupier]);
-        if (firstCardCroupier.name === "ReDenari") {
-          setCroupierScore(7);
-        } else {
-          setCroupierScore(firstCardCroupier.value);
-        }
-      }, 1000);
-
-      setStartTheGame(false);
-      setGameSet(true);
+      const {card, newDeck} = firstDraw();
+      setPlayerInfo({...playerInfo, playerScore:card.value, playerHand:[card]})
+      croupierFirstDraw(newDeck)
+      setGameSettings({...gameSettings, start:false, gameSet:true, canDraw:true})
     } catch (error) {
       console.log(error);
     }
   };
 
+  const firstCardReDenari = (card, isPlayer) => {
+    switch (card.value) {
+        case 0.5 || 1.5 || 2.5 || 3.5 || 4.5 || 5.5 || 6.5:
+          if(isPlayer){
+            setPlayerInfo({...playerInfo, playerScore:7.5, playerHand:[...playerInfo.playerHand, card]})
+          }else{
+            setCroupierInfo({...croupierInfo, croupierScore:7.5, croupierHand:[...croupierInfo.croupierHand, card]})
+          }
+          break;
+        default:
+          if(isPlayer){
+            setPlayerInfo({...playerInfo, playerScore:7, playerHand:[...playerInfo.playerHand, card] })
+          }else{
+            setCroupierInfo({...croupierInfo, croupierScore:7, croupierHand:[...croupierInfo.croupierHand, card]})
+          }
+          break;
+      }
+  }
+
+  const drawCardReDenari = (card, isPlayer) => {
+    switch (isPlayer ? playerInfo.playerScore : croupierInfo.croupierScore) {
+      case 0.5 || 1.5 || 2.5 || 3.5 || 4.5 || 5.5 || 6.5:
+        if(isPlayer){
+          setPlayerInfo({...playerInfo, playerScore:7.5, playerHand:[...playerInfo.playerHand, card]})
+        }else{
+          setCroupierInfo({...croupierInfo, croupierScore:7.5, croupierHand:[...croupierInfo.croupierHand, card]})
+        }
+        break;
+      default:
+        if(isPlayer){
+          setPlayerInfo({...playerInfo, playerScore:7, playerHand:[...playerInfo.playerHand, card]})
+        }else{
+          setCroupierInfo({...croupierInfo, croupierScore:7, croupierHand:[...croupierInfo.croupierHand, card]})
+        }
+        break;
+    }
+  }
+  
   const playerDraw = () => {
-    debugger
     try {
-      const value = draw();
-      setPlayerHand((playerHand) => [...playerHand, value]);
-      console.log(playerHand);
-      if (
-        playerHand[0].name === "ReDenari" &&
-        (value.value === 1 || 2 || 3 || 4 || 5 || 6)
-      ) {
-        setPlayerScore(7);
-      } else if (
-        value.name === "ReDenari" &&
-        (playerScore === 0.5 || 1.5 || 2.5 || 3.5 || 4.5 || 5.5 || 6.5)
-      ) {
-        setPlayerScore(7.5);
-      } else if (
-        playerHand[0].name === "ReDenari" &&
-        (value.value === 0.5 || 1.5 || 2.5 || 3.5 || 4.5 || 5.5 || 6.5)
-      ) {
-        setPlayerScore(7.5);
-      } else if (
-        value.name === "ReDenari" &&
-        (playerScore === 0 || 1 || 2 || 3 || 4 || 5 || 6)
-      ) {
-        setPlayerScore(7);
-      } else {
-        setPlayerScore(playerScore + value.value);
+      const card = draw();
+      if(playerInfo.playerHand[0].name === 'ReDenari'){
+        firstCardReDenari(card, true)
+      }else if (card.name === 'ReDenari'){
+        drawCardReDenari(card,true)
+      }else{
+       setPlayerInfo({...playerInfo, playerScore: playerInfo.playerScore + card.value, playerHand:[...playerInfo.playerHand, card]}) 
       }
     } catch (error) {
       console.log(error);
@@ -117,42 +138,32 @@ const DeckDraw = () => {
   };
 
   const croupierDraw = () => {
-    if (stop === true && croupierScore < 5) {
-      const value = draw();
-      setCroupierHand((croupierHand) => [...croupierHand, value]);
-      if (
-        croupierHand[0].name === "ReDenari" &&
-        (value.value === 1 || 2 || 3 || 4 || 5 || 6)
-      ) {
-        setCroupierScore(7);
-      } else if (
-        value.name === "ReDenari" &&
-        (croupierScore === 0.5 || 1.5 || 2.5 || 3.5 || 4.5 || 5.5 || 6.5)
-      ) {
-        setCroupierScore(7.5);
-      } else if (
-        value.name === "ReDenari" &&
-        (croupierScore === 0 || 1 || 2 || 3 || 4 || 5 || 6)
-      ) {
-        setCroupierScore(7);
-      } else {
-        setCroupierScore(croupierScore + value.value);
+    if (gameSettings.stop === true && croupierInfo.croupierScore < 5) {
+      const card = draw();
+      if (croupierInfo.croupierHand[0].name === 'ReDenari'){
+        firstCardReDenari(card, false)
+      }else if (card.name === 'ReDenari'){
+        drawCardReDenari(card, false)
+      }else {
+        setCroupierInfo({...croupierInfo, croupierScore:croupierInfo.croupierScore + card.value, croupierHand:[...croupierInfo.croupierHand, card]})
       }
-      setShowResult(true);
-    } else if (stop === true) {
-      setStop(false);
-      setShowResult(true);
+      setGameSettings({...gameSettings, stop:false, canDraw:false})
+      setTimeout(() => {
+        setGameSettings({...gameSettings, stop:true})
+      }, 1000);
+    } else if (gameSettings.stop === true) {
+      setGameSettings({...gameSettings, stop:false, reGame:true, gameSet:false , showResult:true, canDraw:false})
     }
   };
 
   const results = () => {
-    if (showResult === true) {
+    if (gameSettings.showResult === true) {
       if (
-        (croupierScore < playerScore && playerScore < 8) ||
-        croupierScore > 7.5
+        (croupierInfo.croupierScore < playerInfo.playerScore && playerInfo.playerScore < 8) ||
+        croupierInfo.croupierScore > 7.5
       ) {
         return <h1 className="results">Vittoria</h1>;
-      } else if (croupierScore === playerScore) {
+      } else if (croupierInfo.croupierScore === playerInfo.playerScore) {
         return <h1 className="results">Pareggio</h1>;
       } else {
         return <h1 className="results">Sconfitta</h1>;
@@ -161,24 +172,49 @@ const DeckDraw = () => {
   };
 
   const restartTheGame = () => {
-    setDeck(cardsData);
-    setCroupierHand([]);
-    setPlayerHand([]);
-    setStop(false);
-    setPlayerScore(0);
-    setCroupierScore(0);
-    setShowResult(false);
-    setStartTheGame(true);
-    setGameSet(false);
+    setGameSettings({
+      deck:cardsData,
+      stop:false,
+      showResult:false,
+      start:true,
+      gameSet:false
+    })
     if (
-      (croupierScore < playerScore && playerScore < 8) ||
-      croupierScore > 7.5
+      (croupierInfo.croupierScore < playerInfo.playerScore && playerInfo.playerScore < 8) ||
+      croupierInfo.croupierScore > 7.5
     ) {
-      setPlayerWin(playerWin + 1);
-    } else if (croupierScore === playerScore) {
-      return;
+      setPlayerInfo({
+        playerHand:[],
+        playerScore:0,
+        playerWin: playerInfo.playerWin + 1
+      })
+      setCroupierInfo({
+        croupierHand:[],
+        croupierScore:0,
+        croupierWin: croupierInfo.croupierWin
+      })
+    } else if (croupierInfo.croupierScore === playerInfo.playerScore) {
+      setPlayerInfo({
+        playerHand:[],
+        playerScore:0,
+        playerWin: playerInfo.playerWin
+      })
+      setCroupierInfo({
+        croupierHand:[],
+        croupierScore:0,
+        croupierWin: croupierInfo.croupierWin
+      })
     } else {
-      setCroupierWin(croupierWin + 1);
+      setCroupierInfo({
+        croupierHand:[],
+        croupierScore:0,
+        croupierWin: croupierInfo.croupierWin + 1
+      })
+      setPlayerInfo({
+        playerHand:[],
+        playerScore:0,
+        playerWin: playerInfo.playerWin
+      })
     }
   };
 
@@ -197,14 +233,13 @@ const DeckDraw = () => {
       });
     }
   };
-
   return (
     <Container id="DeckDrowContainer" fluid className="bg-primary">
       {croupierDraw()}
 
       <Row className="justify-content-center">
         <Col xs={4}>
-          <Row className="me-5">{renderCards(playerHand)}</Row>
+          <Row className="me-5">{renderCards(playerInfo.playerHand)}</Row>
         </Col>
 
         <Col xs={3}>
@@ -212,7 +247,7 @@ const DeckDraw = () => {
             <Row>
               <Button
                 className="mt-md-3"
-                disabled={startTheGame ? false : true}
+                disabled={gameSettings.start ? false : true}
                 variant="info"
                 onClick={startGame}
               >
@@ -222,7 +257,7 @@ const DeckDraw = () => {
             <Row>
               <Button
                 className="mt-md-3"
-                disabled={gameSet ? false : true}
+                disabled={gameSettings.canDraw ? false : true}
                 variant="info"
                 onClick={playerDraw}
               >
@@ -232,9 +267,9 @@ const DeckDraw = () => {
             <Row>
               <Button
                 className="mt-md-3"
-                disabled={gameSet ? false : true}
+                disabled={gameSettings.gameSet ? false : true}
                 variant="info"
-                onClick={() => setStop(true)}
+                onClick={() => setGameSettings({...gameSettings, stop:true})}
               >
                 Stai
               </Button>
@@ -244,6 +279,7 @@ const DeckDraw = () => {
                 className="mt-md-3"
                 variant="info"
                 onClick={restartTheGame}
+                disabled={gameSettings.reGame ? false : true}
               >
                 Rigioca
               </Button>
@@ -251,18 +287,18 @@ const DeckDraw = () => {
           </Stack>
         </Col>
         <Col xs={4}>
-          <Row className="ms-5">{renderCards(croupierHand)}</Row>
+          <Row className="ms-5">{renderCards(croupierInfo.croupierHand)}</Row>
         </Col>
       </Row>
       <Row className="my-5 d-flex text-center text-secondary">
         <Col>
-          <h2>{playerScore}</h2>
+          <h2>{playerInfo.playerScore}</h2>
         </Col>
         <Col>
           <h2>{results()}</h2>
         </Col>
         <Col>
-          <h2>{croupierScore}</h2>
+          <h2>{croupierInfo.croupierScore}</h2>
         </Col>
       </Row>
       {/* Totale vittorie */}
@@ -270,10 +306,10 @@ const DeckDraw = () => {
         <Row className="TotalScore py-3">
           <h2>Vittorie totali</h2>
           <Col className="mt-2">
-            <h3 id="playerScore">{playerWin}</h3>
+            <h3 id="playerScore">{playerInfo.playerWin}</h3>
           </Col>
           <Col className="mt-2">
-            <h3 id="croupierScore">{croupierWin}</h3>
+            <h3 id="croupierScore">{croupierInfo.croupierWin}</h3>
           </Col>
         </Row>
       </Container>
