@@ -37,16 +37,17 @@ const DeckDraw = () => {
   const draw = (deckAfterFirstDraw) => {
     try {
       if(!deckAfterFirstDraw){
+        debugger
         const deck = gameSettings.deck
         const drawCard = deck[Math.floor(Math.random() * deck.length)];
         const newDeck = deck.filter((card) => card !== drawCard);
         setGameSettings({...gameSettings, deck:newDeck})
         return drawCard;
       }else {
+        debugger
         const drawCard = deckAfterFirstDraw[Math.floor(Math.random() * deckAfterFirstDraw.length)];
         const newDeck = deckAfterFirstDraw.filter((card) => card !== drawCard);
-        setGameSettings({...gameSettings, deck:newDeck})
-        return drawCard;
+        return {firstCardCroupier:drawCard, newDeck:newDeck};
       }
       
     } catch (error) {
@@ -66,8 +67,9 @@ const DeckDraw = () => {
   }
   
   const croupierFirstDraw = (deck) => {
-    const firstCardCroupier = draw(deck);
+    const {firstCardCroupier, newDeck} = draw(deck);
     setCroupierInfo({...croupierInfo, score:firstCardCroupier.value, hand:[firstCardCroupier]})
+    setGameSettings({...gameSettings, deck:newDeck, start:false, gameSet:true, canDraw:true})
   }
 
 
@@ -76,7 +78,6 @@ const DeckDraw = () => {
       const {card, newDeck} = firstDraw();
       setPlayerInfo({...playerInfo, score:card.value, hand:[card]})
       croupierFirstDraw(newDeck)
-      setGameSettings({...gameSettings, start:false, gameSet:true, canDraw:true})
     } catch (error) {
       console.log(error);
     }
@@ -145,7 +146,7 @@ const DeckDraw = () => {
       }else {
         setCroupierInfo({...croupierInfo, score:croupierInfo.score + card.value, hand:[...croupierInfo.hand, card]})
       }
-      
+
       setGameSettings({...gameSettings, stop:false, canDraw:false})
       //timeout to slow CPU card draw
       setTimeout(() => {
