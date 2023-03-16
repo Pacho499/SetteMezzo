@@ -12,7 +12,7 @@ const Footer = () => {
       <Container fluid>
         <Navbar.Text>
           <a
-            href="https://lorenzopalumbo.netlify.app/3"
+            href="https://lorenzopalumbo.netlify.app/"
             target="_blank"
             rel="noreferrer"
             style={{ color: "yellow" }}
