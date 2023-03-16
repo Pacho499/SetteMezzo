@@ -17,13 +17,11 @@ const DeckDraw = () => {
     canDraw : false,
     reGame : false
   })
-
   const [playerInfo, setPlayerInfo] = useState({
     hand:[],
     score:0,
     win:0,
   })
-
   const [croupierInfo, setCroupierInfo] = useState({
     hand:[],
     score:0,
@@ -32,7 +30,7 @@ const DeckDraw = () => {
 
   useEffect(() => {
     if (playerInfo.score > 7.5) {
-      setGameSettings({...gameSettings, showResult:true});
+      setGameSettings({...gameSettings, canDraw:false});
     }
   }, [playerInfo.score]);
 
@@ -147,6 +145,7 @@ const DeckDraw = () => {
       }else {
         setCroupierInfo({...croupierInfo, score:croupierInfo.score + card.value, hand:[...croupierInfo.hand, card]})
       }
+      
       setGameSettings({...gameSettings, stop:false, canDraw:false})
       //timeout to slow CPU card draw
       setTimeout(() => {
@@ -157,12 +156,11 @@ const DeckDraw = () => {
     }
   };
 
+  const playerWin =  (croupierInfo.score < playerInfo.score && playerInfo.score < 8) || croupierInfo.score > 7.5
+
   const results = () => {
     if (gameSettings.showResult === true) {
-      if (
-        (croupierInfo.score < playerInfo.score && playerInfo.score < 8) ||
-        croupierInfo.score > 7.5
-      ) {
+      if (playerWin) {
         return <h1 className="results">Vittoria</h1>;
       } else if (croupierInfo.score === playerInfo.score) {
         return <h1 className="results">Pareggio</h1>;
@@ -180,41 +178,38 @@ const DeckDraw = () => {
       start:true,
       gameSet:false
     })
-    if (
-      (croupierInfo.score < playerInfo.score && playerInfo.score < 8) ||
-      croupierInfo.score > 7.5
-    ) {
+    if (playerWin) {
       setPlayerInfo({
         hand:[],
         score:0,
-        playerWin: playerInfo.playerWin + 1
+        win: playerInfo.win + 1
       })
       setCroupierInfo({
         hand:[],
         score:0,
-        croupierWin: croupierInfo.croupierWin
+        win: croupierInfo.win
       })
     } else if (croupierInfo.score === playerInfo.score) {
       setPlayerInfo({
         hand:[],
         score:0,
-        playerWin: playerInfo.playerWin
+        win: playerInfo.win
       })
       setCroupierInfo({
         hand:[],
         score:0,
-        croupierWin: croupierInfo.croupierWin
+        win: croupierInfo.win
       })
     } else {
       setCroupierInfo({
         hand:[],
         score:0,
-        croupierWin: croupierInfo.croupierWin + 1
+        win: croupierInfo.win + 1
       })
       setPlayerInfo({
         hand:[],
         score:0,
-        playerWin: playerInfo.playerWin
+        win: playerInfo.win
       })
     }
   };
@@ -246,42 +241,22 @@ const DeckDraw = () => {
         <Col xs={3}>
           <Stack className="buttons" gap={3}>
             <Row>
-              <Button
-                className="mt-md-3"
-                disabled={gameSettings.start ? false : true}
-                variant="info"
-                onClick={startGame}
-              >
+              <Button className="mt-md-3" disabled={gameSettings.start ? false : true} variant="info" onClick={startGame}>
                 Inizia partita
               </Button>
             </Row>
             <Row>
-              <Button
-                className="mt-md-3"
-                disabled={gameSettings.canDraw ? false : true}
-                variant="info"
-                onClick={playerDraw}
-              >
+              <Button className="mt-md-3" disabled={gameSettings.canDraw ? false : true} variant="info" onClick={playerDraw}>
                 Carta
               </Button>
             </Row>
             <Row>
-              <Button
-                className="mt-md-3"
-                disabled={gameSettings.gameSet ? false : true}
-                variant="info"
-                onClick={() => setGameSettings({...gameSettings, stop:true})}
-              >
+              <Button className="mt-md-3" disabled={gameSettings.gameSet ? false : true} variant="info" onClick={() => setGameSettings({...gameSettings, stop:true})}>
                 Stai
               </Button>
             </Row>
             <Row>
-              <Button
-                className="mt-md-3"
-                variant="info"
-                onClick={restartTheGame}
-                disabled={gameSettings.reGame ? false : true}
-              >
+              <Button className="mt-md-3" variant="info" onClick={restartTheGame} disabled={gameSettings.reGame ? false : true}>
                 Rigioca
               </Button>
             </Row>
@@ -307,10 +282,10 @@ const DeckDraw = () => {
         <Row className="TotalScore py-3">
           <h2>Vittorie totali</h2>
           <Col className="mt-2">
-            <h3 id="score">{playerInfo.playerWin}</h3>
+            <h3 id="score">{playerInfo.win}</h3>
           </Col>
           <Col className="mt-2">
-            <h3 id="croupierScore">{croupierInfo.croupierWin}</h3>
+            <h3 id="croupierScore">{croupierInfo.win}</h3>
           </Col>
         </Row>
       </Container>
