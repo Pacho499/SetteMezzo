@@ -19,22 +19,22 @@ const DeckDraw = () => {
   })
 
   const [playerInfo, setPlayerInfo] = useState({
-    playerHand:[],
-    playerScore:0,
-    playerWin:0,
+    hand:[],
+    score:0,
+    win:0,
   })
 
   const [croupierInfo, setCroupierInfo] = useState({
-    croupierHand:[],
-    croupierScore:0,
-    croupierWin:0
+    hand:[],
+    score:0,
+    win:0
   })
 
   useEffect(() => {
-    if (playerInfo.playerScore > 7.5) {
+    if (playerInfo.score > 7.5) {
       setGameSettings({...gameSettings, showResult:true});
     }
-  }, [playerInfo.playerScore]);
+  }, [playerInfo.score]);
 
   const draw = (deckAfterFirstDraw) => {
     try {
@@ -69,14 +69,14 @@ const DeckDraw = () => {
   
   const croupierFirstDraw = (deck) => {
     const firstCardCroupier = draw(deck);
-    setCroupierInfo({...croupierInfo, croupierScore:firstCardCroupier.value, croupierHand:[firstCardCroupier]})
+    setCroupierInfo({...croupierInfo, score:firstCardCroupier.value, hand:[firstCardCroupier]})
   }
 
 
   const startGame = () => {
     try {
       const {card, newDeck} = firstDraw();
-      setPlayerInfo({...playerInfo, playerScore:card.value, playerHand:[card]})
+      setPlayerInfo({...playerInfo, score:card.value, hand:[card]})
       croupierFirstDraw(newDeck)
       setGameSettings({...gameSettings, start:false, gameSet:true, canDraw:true})
     } catch (error) {
@@ -88,35 +88,35 @@ const DeckDraw = () => {
     switch (card.value) {
         case 0.5 || 1.5 || 2.5 || 3.5 || 4.5 || 5.5 || 6.5:
           if(isPlayer){
-            setPlayerInfo({...playerInfo, playerScore:7.5, playerHand:[...playerInfo.playerHand, card]})
+            setPlayerInfo({...playerInfo, score:7.5, hand:[...playerInfo.hand, card]})
           }else{
-            setCroupierInfo({...croupierInfo, croupierScore:7.5, croupierHand:[...croupierInfo.croupierHand, card]})
+            setCroupierInfo({...croupierInfo, score:7.5, hand:[...croupierInfo.hand, card]})
           }
           break;
         default:
           if(isPlayer){
-            setPlayerInfo({...playerInfo, playerScore:7, playerHand:[...playerInfo.playerHand, card] })
+            setPlayerInfo({...playerInfo, score:7, hand:[...playerInfo.hand, card] })
           }else{
-            setCroupierInfo({...croupierInfo, croupierScore:7, croupierHand:[...croupierInfo.croupierHand, card]})
+            setCroupierInfo({...croupierInfo, score:7, hand:[...croupierInfo.hand, card]})
           }
           break;
       }
   }
 
   const drawCardReDenari = (card, isPlayer) => {
-    switch (isPlayer ? playerInfo.playerScore : croupierInfo.croupierScore) {
+    switch (isPlayer ? playerInfo.score : croupierInfo.score) {
       case 0.5 || 1.5 || 2.5 || 3.5 || 4.5 || 5.5 || 6.5:
         if(isPlayer){
-          setPlayerInfo({...playerInfo, playerScore:7.5, playerHand:[...playerInfo.playerHand, card]})
+          setPlayerInfo({...playerInfo, score:7.5, hand:[...playerInfo.hand, card]})
         }else{
-          setCroupierInfo({...croupierInfo, croupierScore:7.5, croupierHand:[...croupierInfo.croupierHand, card]})
+          setCroupierInfo({...croupierInfo, score:7.5, hand:[...croupierInfo.hand, card]})
         }
         break;
       default:
         if(isPlayer){
-          setPlayerInfo({...playerInfo, playerScore:7, playerHand:[...playerInfo.playerHand, card]})
+          setPlayerInfo({...playerInfo, score:7, hand:[...playerInfo.hand, card]})
         }else{
-          setCroupierInfo({...croupierInfo, croupierScore:7, croupierHand:[...croupierInfo.croupierHand, card]})
+          setCroupierInfo({...croupierInfo, score:7, hand:[...croupierInfo.hand, card]})
         }
         break;
     }
@@ -125,12 +125,12 @@ const DeckDraw = () => {
   const playerDraw = () => {
     try {
       const card = draw();
-      if(playerInfo.playerHand[0].name === 'ReDenari'){
+      if(playerInfo.hand[0].name === 'ReDenari'){
         firstCardReDenari(card, true)
       }else if (card.name === 'ReDenari'){
         drawCardReDenari(card,true)
       }else{
-       setPlayerInfo({...playerInfo, playerScore: playerInfo.playerScore + card.value, playerHand:[...playerInfo.playerHand, card]}) 
+       setPlayerInfo({...playerInfo, score: playerInfo.score + card.value, hand:[...playerInfo.hand, card]}) 
       }
     } catch (error) {
       console.log(error);
@@ -138,16 +138,17 @@ const DeckDraw = () => {
   };
 
   const croupierDraw = () => {
-    if (gameSettings.stop === true && croupierInfo.croupierScore < 5) {
+    if (gameSettings.stop === true && croupierInfo.score < 5) {
       const card = draw();
-      if (croupierInfo.croupierHand[0].name === 'ReDenari'){
+      if (croupierInfo.hand[0].name === 'ReDenari'){
         firstCardReDenari(card, false)
       }else if (card.name === 'ReDenari'){
         drawCardReDenari(card, false)
       }else {
-        setCroupierInfo({...croupierInfo, croupierScore:croupierInfo.croupierScore + card.value, croupierHand:[...croupierInfo.croupierHand, card]})
+        setCroupierInfo({...croupierInfo, score:croupierInfo.score + card.value, hand:[...croupierInfo.hand, card]})
       }
       setGameSettings({...gameSettings, stop:false, canDraw:false})
+      //timeout to slow CPU card draw
       setTimeout(() => {
         setGameSettings({...gameSettings, stop:true})
       }, 1000);
@@ -159,11 +160,11 @@ const DeckDraw = () => {
   const results = () => {
     if (gameSettings.showResult === true) {
       if (
-        (croupierInfo.croupierScore < playerInfo.playerScore && playerInfo.playerScore < 8) ||
-        croupierInfo.croupierScore > 7.5
+        (croupierInfo.score < playerInfo.score && playerInfo.score < 8) ||
+        croupierInfo.score > 7.5
       ) {
         return <h1 className="results">Vittoria</h1>;
-      } else if (croupierInfo.croupierScore === playerInfo.playerScore) {
+      } else if (croupierInfo.score === playerInfo.score) {
         return <h1 className="results">Pareggio</h1>;
       } else {
         return <h1 className="results">Sconfitta</h1>;
@@ -180,39 +181,39 @@ const DeckDraw = () => {
       gameSet:false
     })
     if (
-      (croupierInfo.croupierScore < playerInfo.playerScore && playerInfo.playerScore < 8) ||
-      croupierInfo.croupierScore > 7.5
+      (croupierInfo.score < playerInfo.score && playerInfo.score < 8) ||
+      croupierInfo.score > 7.5
     ) {
       setPlayerInfo({
-        playerHand:[],
-        playerScore:0,
+        hand:[],
+        score:0,
         playerWin: playerInfo.playerWin + 1
       })
       setCroupierInfo({
-        croupierHand:[],
-        croupierScore:0,
+        hand:[],
+        score:0,
         croupierWin: croupierInfo.croupierWin
       })
-    } else if (croupierInfo.croupierScore === playerInfo.playerScore) {
+    } else if (croupierInfo.score === playerInfo.score) {
       setPlayerInfo({
-        playerHand:[],
-        playerScore:0,
+        hand:[],
+        score:0,
         playerWin: playerInfo.playerWin
       })
       setCroupierInfo({
-        croupierHand:[],
-        croupierScore:0,
+        hand:[],
+        score:0,
         croupierWin: croupierInfo.croupierWin
       })
     } else {
       setCroupierInfo({
-        croupierHand:[],
-        croupierScore:0,
+        hand:[],
+        score:0,
         croupierWin: croupierInfo.croupierWin + 1
       })
       setPlayerInfo({
-        playerHand:[],
-        playerScore:0,
+        hand:[],
+        score:0,
         playerWin: playerInfo.playerWin
       })
     }
@@ -239,7 +240,7 @@ const DeckDraw = () => {
 
       <Row className="justify-content-center">
         <Col xs={4}>
-          <Row className="me-5">{renderCards(playerInfo.playerHand)}</Row>
+          <Row className="me-5">{renderCards(playerInfo.hand)}</Row>
         </Col>
 
         <Col xs={3}>
@@ -287,18 +288,18 @@ const DeckDraw = () => {
           </Stack>
         </Col>
         <Col xs={4}>
-          <Row className="ms-5">{renderCards(croupierInfo.croupierHand)}</Row>
+          <Row className="ms-5">{renderCards(croupierInfo.hand)}</Row>
         </Col>
       </Row>
       <Row className="my-5 d-flex text-center text-secondary">
         <Col>
-          <h2>{playerInfo.playerScore}</h2>
+          <h2>{playerInfo.score}</h2>
         </Col>
         <Col>
           <h2>{results()}</h2>
         </Col>
         <Col>
-          <h2>{croupierInfo.croupierScore}</h2>
+          <h2>{croupierInfo.score}</h2>
         </Col>
       </Row>
       {/* Totale vittorie */}
@@ -306,7 +307,7 @@ const DeckDraw = () => {
         <Row className="TotalScore py-3">
           <h2>Vittorie totali</h2>
           <Col className="mt-2">
-            <h3 id="playerScore">{playerInfo.playerWin}</h3>
+            <h3 id="score">{playerInfo.playerWin}</h3>
           </Col>
           <Col className="mt-2">
             <h3 id="croupierScore">{croupierInfo.croupierWin}</h3>
